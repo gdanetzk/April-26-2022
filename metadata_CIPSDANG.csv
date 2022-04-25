@@ -1,0 +1,134 @@
+Sample_ID,Row,Group,Range,Location_ID,Sample_year,Treatment_ID,Replicate,Location_desc,Cover_sp,Notes
+10_T_A,10,rep5, 4,T,2020,A,a,old tree row,none,-
+10_T_B5,10,rep5, 6,T,2020,B,a,old tree row,soybeans,-
+10_T_C5,10,rep5, 5,T,2020,C,a,old tree row,oats,-
+10_T_D5,10,rep5, 7,T,2020,D,a,old tree row,oilseed radish,-
+10_TR_A5,10,rep5, 4,TR,2019,A,b,old tree row,none,-
+10_TR_D5,10,rep5, 7,TR,2019,D,b,old tree row,oilseed radish,-
+11_T_A6,11,rep6, 4,T,2020,A,a,old tree row,none,-
+11_T_B6,11,rep6, 3,T,2020,B,a,old tree row,soybeans,-
+11_T_C6,11,rep6, 2,T,2020,C,a,old tree row,oats,-
+11_T_D6,11,rep6, 1,T,2020,D,a,old tree row,oilseed radish,-
+11_TR_A6,11,rep6, 4,TR,2019,A,b,old tree row,none,-
+11_TR_B6,11,rep6, 3,TR,2019,B,b,old tree row,soybeans,-
+11_TR_C6,11,rep6, 2,TR,2019,C,b,old tree row,oats,-
+11_TR_D6,11,rep6, 1,TR,2019,D,b,old tree row,oilseed radish,-
+12_L_A6,12,rep6, 4,L,2020,A,a,old drive lane,none,-
+12_L_B6,12,rep6, 3,L,2020,B,a,old drive lane,soybeans,-
+12_L_C6,12,rep6, 2,L,2020,C,a,old drive lane,oats,-
+12_L_D6,12,rep6, 1,L,2020,D,a,old drive lane,oilseed radish,-
+12_LN_A6,12,rep6, 4,LN,2019,A,b,old drive lane,none,-
+12_LN_B6,12,rep6, 3,LN,2019,B,b,old drive lane,soybeans,-
+12_LN_C6,12,rep6, 2,LN,2019,C,b,old drive lane,oats,-
+12_LN_D6,12,rep6, 1,LN,2019,D,b,old drive lane,oilseed radish,-
+1_L_A1, 1,rep1, 4,L,2020,A,a,old drive lane,none,-
+1_L_B1, 1,rep1, 6,L,2020,B,a,old drive lane,soybeans,-
+1_L_C1, 1,rep1, 7,L,2020,C,a,old drive lane,oats,-
+1_L_D1, 1,rep1, 5,L,2020,D,a,old drive lane,oilseed radish,-
+1_LN_A1, 1,rep1, 4,LN,2019,A,b,old drive lane,none,-
+1_LN_B1, 1,rep1, 6,LN,2019,B,b,old drive lane,soybeans,-
+1_LN_C1, 1,rep1, 7,LN,2019,C,b,old drive lane,oats,-
+1_LN_D1, 1,rep1, 5,LN,2019,D,b,old drive lane,oilseed radish,-
+2018_A1L_S1, 1,rep1,NA,L,2018,A,NA,old drive lane,none,-
+2018_A1T_S64, 2,rep1,NA,T,2018,A,NA,old tree row,none,-
+2018_A2L_S56, 4,rep2,NA,L,2018,A,NA,old drive lane,none,-
+2018_A2T_S54, 3,rep2,NA,T,2018,A,NA,old tree row,none,-
+2018_A3L_S37, 5,rep3,NA,L,2018,A,NA,old drive lane,none,-
+2018_A3T_S60, 6,rep3,NA,T,2018,A,NA,old tree row,none,-
+2018_A4L_S25, 8,rep4,NA,L,2018,A,NA,old drive lane,none,-
+2018_A4T_S16, 7,rep4,NA,T,2018,A,NA,old tree row,none,-
+2018_A5L_S68, 9,rep5,NA,L,2018,A,NA,old drive lane,none,-
+2018_A5T_S30,10,rep5,NA,T,2018,A,NA,old tree row,none,-
+2018_B1L_S7, 1,rep1,NA,L,2018,B,NA,old drive lane,soybeans,-
+2018_B1T_S46, 2,rep1,NA,T,2018,B,NA,old tree row,soybeans,-
+2018_B2L_S27, 4,rep2,NA,L,2018,B,NA,old drive lane,soybeans,-
+2018_B2T_S10, 3,rep2,NA,T,2018,B,NA,old tree row,soybeans,-
+2018_B3L_S50, 5,rep3,NA,L,2018,B,NA,old drive lane,soybeans,-
+2018_B3T_S29, 6,rep3,NA,T,2018,B,NA,old tree row,soybeans,-
+2018_B4L_S69, 8,rep4,NA,L,2018,B,NA,old drive lane,soybeans,-
+2018_B5L_S14, 9,rep5,NA,L,2018,B,NA,old drive lane,soybeans,-
+2018_B6L_S12,12,rep6,NA,L,2018,B,NA,old drive lane,soybeans,-
+2018_C1L_S8, 1,rep1,NA,L,2018,C,NA,old drive lane,oats,-
+2018_C1T_S67, 2,rep1,NA,T,2018,C,NA,old tree row,oats,-
+2018_C2L_S66, 4,rep2,NA,L,2018,C,NA,old drive lane,oats,-
+2018_C2T_S53, 3,rep2,NA,T,2018,C,NA,old tree row,oats,-
+2018_C3L_S40, 5,rep3,NA,L,2018,C,NA,old drive lane,oats,-
+2018_C3T_S2, 6,rep3,NA,T,2018,C,NA,old tree row,oats,-
+2018_C4L_S55, 8,rep4,NA,L,2018,C,NA,old drive lane,oats,-
+2018_C4T_S62, 7,rep4,NA,T,2018,C,NA,old tree row,oats,-
+2018_C5L_S48, 9,rep5,NA,L,2018,C,NA,old drive lane,oats,-
+2018_C6L_S24,12,rep6,NA,L,2018,C,NA,old drive lane,oats,-
+2018_D1L_S4, 1,rep1,NA,L,2018,D,NA,old drive lane,oilseed radish,-
+2018_D1T_S19, 2,rep1,NA,T,2018,D,NA,old tree row,oilseed radish,-
+2018_D2L_S65, 4,rep2,NA,L,2018,D,NA,old drive lane,oilseed radish,-
+2018_D2T_S59, 3,rep2,NA,T,2018,D,NA,old tree row,oilseed radish,-
+2018_D3L_S52, 5,rep3,NA,L,2018,D,NA,old drive lane,oilseed radish,-
+2018_D3T_S20, 6,rep3,NA,T,2018,D,NA,old tree row,oilseed radish,-
+2018_D4L_S35, 8,rep4,NA,L,2018,D,NA,old drive lane,oilseed radish,-
+2018_D5L_S43, 9,rep5,NA,L,2018,D,NA,old drive lane,oilseed radish,-
+2018_D5T_S47,10,rep5,NA,T,2018,D,NA,old tree row,oilseed radish,-
+2018_D6L_S34,12,rep6,NA,L,2018,D,NA,old drive lane,oilseed radish,-
+2_T_A1, 2,rep1, 4,T,2020,A,a,old tree row,none,-
+2_T_B1, 2,rep1, 6,T,2020,B,a,old tree row,soybeans,-
+2_T_C1, 2,rep1, 7,T,2020,C,a,old tree row,oats,-
+2_T_D1, 2,rep1, 5,T,2020,D,a,old tree row,oilseed radish,-
+2_TR_A1, 2,rep1, 4,TR,2019,A,b,old tree row,none,-
+2_TR_B1, 2,rep1, 6,TR,2019,B,b,old tree row,soybeans,-
+2_TR_C1, 2,rep1, 7,TR,2019,C,b,old tree row,oats,-
+2_TR_D1, 2,rep1, 5,TR,2019,D,b,old tree row,oilseed radish,-
+3_T_A2, 3,rep2, 1,T,2020,A,a,old tree row,none,-
+3_T_B2, 3,rep2, 3,T,2020,B,a,old tree row,soybeans,-
+3_T_C2a, 3,rep2, 4,T,2020,C,a,old tree row,oats,duplicate
+3_T_D2, 3,rep2, 2,T,2020,D,a,old tree row,oilseed radish,-
+3_TR_A2, 3,rep2, 1,TR,2019,A,b,old tree row,none,-
+3_TR_B2, 3,rep2, 3,TR,2019,B,b,old tree row,soybeans,-
+3_TR_C2, 3,rep2, 4,TR,2019,C,b,old tree row,oats,-
+3_TR_D2, 3,rep2, 2,TR,2019,D,b,old tree row,oilseed radish,-
+4_L_A2, 4,rep2, 1,L,2020,A,a,old drive lane,none,-
+4_L_B2, 4,rep2, 3,L,2020,B,a,old drive lane,soybeans,-
+4_L_C2, 4,rep2, 4,L,2020,C,a,old drive lane,oats,-
+4_L_D2, 4,rep2, 2,L,2020,D,a,old drive lane,oilseed radish,-
+4_LN_A2, 4,rep2, 1,LN,2019,A,b,old drive lane,none,-
+4_LN_B2, 4,rep2, 3,LN,2019,B,b,old drive lane,soybeans,-
+4_LN_C2, 4,rep2, 4,LN,2019,C,b,old drive lane,oats,-
+4_LN_D2, 4,rep2, 2,LN,2019,D,b,old drive lane,oilseed radish,-
+5_L_A3, 5,rep3, 4,L,2020,A,a,old drive lane,none,-
+5_L_B3, 5,rep3, 5,L,2020,B,a,old drive lane,soybeans,-
+5_L_C3, 5,rep3, 6,L,2020,C,a,old drive lane,oats,-
+5_L_D3, 5,rep3, 7,L,2020,D,a,old drive lane,oilseed radish,-
+5_LN_A3, 5,rep3, 4,LN,2019,A,b,old drive lane,none,-
+5_LN_B3, 5,rep3, 5,LN,2019,B,b,old drive lane,soybeans,-
+5_LN_C3, 5,rep3, 6,LN,2019,C,b,old drive lane,oats,-
+5_LN_D3, 5,rep3, 7,LN,2019,D,b,old drive lane,oilseed radish,-
+6_T_A3, 6,rep3, 4,T,2020,A,a,old tree row,none,-
+6_T_B3, 6,rep3, 5,T,2020,B,a,old tree row,soybeans,-
+6_T_C3, 6,rep3, 6,T,2020,C,a,old tree row,oats,-
+6_T_D3, 6,rep3, 7,T,2020,D,a,old tree row,oilseed radish,-
+6_TL_D3, 6,rep3, 7,TL,2019,D,b,old tree row,oilseed radish,-
+6_TR_A3, 6,rep3, 4,TR,2019,A,b,old tree row,none,-
+6_TR_B3, 6,rep3, 5,TR,2019,B,b,old tree row,soybeans,-
+6_TR_C3, 6,rep3, 6,TR,2019,C,b,old tree row,oats,-
+7_T_A4, 7,rep4, 1,T,2020,A,a,old tree row,none,-
+7_T_B4, 7,rep4, 4,T,2020,B,a,old tree row,soybeans,-
+7_T_C4, 7,rep4, 2,T,2020,C,a,old tree row,oats,-
+7_T_D4, 7,rep4, 3,T,2020,D,a,old tree row,oilseed radish,-
+7_TR_A4, 7,rep4, 1,TR,2019,A,b,old tree row,none,-
+7_TR_B4, 7,rep4, 4,TR,2019,B,b,old tree row,soybeans,-
+7_TR_C4, 7,rep4, 2,TR,2019,C,b,old tree row,oats,-
+7_TR_D4, 7,rep4, 3,TR,2019,D,b,old tree row,oilseed radish,-
+8_L_A4, 8,rep4, 1,L,2020,A,a,old drive lane,none,-
+8_L_B4, 8,rep4, 4,L,2020,B,a,old drive lane,soybeans,-
+8_L_C4, 8,rep4, 2,L,2020,C,a,old drive lane,oats,-
+8_L_D4, 8,rep4, 3,L,2020,D,a,old drive lane,oilseed radish,-
+8_LN_A4, 8,rep4, 1,LN,2019,A,b,old drive lane,none,-
+8_LN_B4, 8,rep4, 4,LN,2019,B,b,old drive lane,soybeans,-
+8_LN_C4, 8,rep4, 2,LN,2019,C,b,old drive lane,oats,-
+8_LN_D4, 8,rep4, 3,LN,2019,D,b,old drive lane,oilseed radish,-
+9_L_A5, 9,rep5, 4,L,2020,A,a,old drive lane,none,-
+9_L_B5, 9,rep5, 6,L,2020,B,a,old drive lane,soybeans,-
+9_L_C5, 9,rep5, 5,L,2020,C,a,old drive lane,oats,-
+9_L_D5, 9,rep5, 7,L,2020,D,a,old drive lane,oilseed radish,-
+9_LN_A5, 9,rep5, 4,LN,2019,A,b,old drive lane,none,-
+9_LN_B5, 9,rep5, 6,LN,2019,B,b,old drive lane,soybeans,-
+9_LN_C5, 9,rep5, 5,LN,2019,C,b,old drive lane,oats,-
+9_LN_D5, 9,rep5, 7,LN,2019,D,b,old drive lane,oilseed radish,-

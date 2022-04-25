@@ -1,0 +1,400 @@
+---
+title: "CIPS DANG"
+author: "Kristi Gdanetz MacCready"
+date: "4/26/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = "~/Documents/CIPS_DANG/")
+```
+
+# Load packages
+There are new packages in this list, install them before proceeding.
+```{r}
+library(vegan)
+library(tidyverse)
+library(readxl)
+library(broom)
+library(cowplot)
+theme_set(theme_cowplot()) #this removes the gray background and grid lines
+library(phyloseq)
+set.seed(426) #set this to make jitter and NMDS plots reproducible 
+```
+
+
+# Import data
+Phyloseq works by matching rownames across matrix objects. A two-dimensional matrix in R looks just like a data frame, however R matrices can be three-dimensional. A three-dimensional object is created when multiple two-dimensional objects are combined. 
+
+Import shared (OTU) table: 
+```{r}
+shared <- read_delim(file = "shared_table_CIPSDANG.txt", delim = "\t", 
+                     col_names = TRUE, show_col_types = FALSE)
+dim(shared) #133 samples, 3055 cols (3054 OTUs)
+```
+
+Import taxonomy table:
+```{r}
+taxonomy <- read_delim(file = "taxonomy_CIPSDANG.txt", delim = "\t", 
+                        col_names = TRUE, show_col_types = FALSE, na = c("NA", "", " "))
+dim(taxonomy) #3054 OTUs, 8 cols (7 ranks)
+```
+
+Import sample meta data:
+```{r}
+meta <- read_delim(file = "metadata_CIPSDANG.csv", delim = ",",
+                   col_names = TRUE,  na = c("NA", "", " "), show_col_types = "FALSE") %>%
+  # reorder columns, drop extra columns
+  select(Sample_ID, everything(), -Range, -Replicate, -Location_ID, -Notes) %>%
+  # set variable order for figures later 
+  mutate(Cover_sp = factor(Cover_sp, ordered = TRUE,
+                           levels = c("none", "oilseed radish", "oats", "soybeans")) )
+dim(meta) #133 rows, 7 cols
+```
+
+
+# Create phyloseq object
+Phyloseq is an R package that has a suite of functions that make microbial community analysis a bit simpler. https://joey711.github.io/phyloseq/index.html It requires the data to be structured in three critical files (1) shared table (sequence variants or OTUs) that contains counts of each sequence; (2) Taxonomic information that contains classifications from Phylum to species for each sequence variant; (3) sample information, which is the participant information we have been working with so far this semester. We imported and formatted these three files in the section above, now we have to combine them into one object. 
+```{r}
+# Format shared table
+shared2 <- shared %>%
+  # set rownames
+  column_to_rownames(var = "Sample_ID") %>%
+  # make phyloseq class object
+  otu_table(taxa_are_rows = FALSE)
+
+# Format sample metadata
+meta2 <- meta %>%
+  # set rownames
+  column_to_rownames(var = "Sample_ID") %>% 
+# make phyloseq class object
+  sample_data()
+  
+# Format taxonomy table 
+taxonomy2 <- taxonomy %>%
+  # set rownames
+  column_to_rownames(var = "OTU_ID") %>%
+  as.matrix() %>% 
+  # make phyloseq class object
+  tax_table()
+
+psq2 <- phyloseq(shared2, meta2, taxonomy2) %>%
+  # remove OTUs with non-Fungi match
+  subset_taxa(Kingdom == "Fungi") 
+psq2  #3054 taxa and 133 samples
+```
+
+In the chunk above each of the three objects was formatted indivdually and saved as new object. Alternatively all the formatting can be completed in-line and the only new object created is the phyloseq object. This is useful if the data files are very large. 
+```{r}
+### Make phyloseq object
+psq <- phyloseq(otu_table(column_to_rownames(shared, 
+                                             var = "Sample_ID"), 
+                          taxa_are_rows = FALSE),
+                sample_data(column_to_rownames(meta, 
+                                               var = "Sample_ID")),
+                tax_table(as.matrix(column_to_rownames(taxonomy, 
+                                                       var = "OTU_ID"))) 
+                ) %>%
+  # remove OTUs with non-Fungi match 
+  subset_taxa(Kingdom == "Fungi")  
+psq #3054 taxa and 133 samples
+```
+
+
+# Visulize taxa
+Phyloseq is a convenient way to combine the parts of the data set, and this package also contains functions that make it easy to convert again for plotting functions. In the chunk below we are converting the phyloseq object to long formatted data: 
+```{r}
+psq_p <- psq %>%
+  # agglomerate taxa at a specified rank level
+  tax_glom(taxrank = "Phylum") %>% 
+  # transform read counts to relative abundance
+  transform_sample_counts(function(x) {x/sum(x)} ) %>% 
+  # melt to long format
+  psmelt() %>% 
+  # clean up column names and order 
+  dplyr::rename(Sample_ID = Sample) %>% 
+  group_by(Treatment_ID, Location_desc, Sample_year, Cover_sp, OTU, Kingdom, Phylum) %>%
+  # average and round relative abundance  
+  summarise(Avg_rel_abund = round(mean(Abundance, na.rm=TRUE), digits = 4) ) %>% 
+  ungroup() 
+nrow(psq_p) #432
+n_distinct(psq_p$Phylum) #18
+```
+
+A quick way to visualize which taxa are in a sample is to make a stacked bar plot: 
+```{r}
+bar_p1 <- psq_p %>%
+  filter(Avg_rel_abund >= 0.001, # 1% relative abundance or higher
+         Location_desc == "old tree row") %>%  # one of the replant locations 
+  # set axis variables and plot type 
+  ggplot(aes(x = Treatment_ID, y = Avg_rel_abund, 
+             fill = Phylum, color = Phylum, Sample_year)) + 
+  geom_col() + 
+  facet_wrap(~Sample_year, nrow = 3, ncol = 1, scales = "fixed") +
+  # flip plot to better fit on screen 
+  coord_flip()
+bar_p1
+```
+
+We can improve upon the default graphics settings but setting a custom color palette and adjusting the sizes of the labels. 
+```{r}
+bar_p2 <- psq_p %>%
+  filter(Avg_rel_abund >= 0.001, Location_desc == "old tree row") %>%  
+  ggplot(aes(x = Treatment_ID, y = Avg_rel_abund, 
+             fill = Phylum, color = Phylum, Sample_year)) + 
+  geom_col() + 
+  facet_wrap(~Sample_year, nrow = 3, ncol = 1, scales = "fixed") +
+  # Clean up labels
+  xlab("Treatment") + 
+  ggtitle("Old tree row") +
+  scale_y_continuous(name = "Relative Abundance (%)",
+                     limits = c(0, 1),
+                     breaks = c(0, 0.25, 0.5, 0.75, 1),
+                     labels = c(0, 25, 50, 75, 100),
+                     expand = c(0,0)) + #remove padding below 0 on y-axis
+  # set custom colors 
+  scale_color_manual(name = "Phylum",
+                     values = c(#ED1E24", "#F58565", #red
+                                "#40B9EB", "#B8DDF5", #lt blue
+                                "#FAA51A", "#FEC679", #orange
+                                "#426FB6", "#AAB7DD", #dark blue
+                                #"#F4EB21", "#F8F18C", #yellow
+                                #"#5B51A3", "#afa9d3", #violet
+                                #"#9ACA3C", "#C2DD89", #yellow-green
+                                "#8750A0", "#C4ACD3", #mauve
+                                "#71C054", "#A9D595", #green
+                                "#D0499A", "#DF92BF", #mauve-pink
+                                "#70C6A5", "#AADAC6", #blue-green
+                                "#ED187A", "#F7AEC0" )) + #pink
+  scale_fill_manual(name = "Phylum", 
+                    values = c(#ED1E24", "#F58565", #red
+                                "#40B9EB", "#B8DDF5", #lt blue
+                                "#FAA51A", "#FEC679", #orange
+                                "#426FB6", "#AAB7DD", #dark blue
+                                #"#F4EB21", "#F8F18C", #yellow
+                                #"#5B51A3", "#afa9d3", #violet
+                                #"#9ACA3C", "#C2DD89", #yellow-green
+                                "#8750A0", "#C4ACD3", #mauve
+                                "#71C054", "#A9D595", #green
+                                "#D0499A", "#DF92BF", #mauve-pink
+                                "#70C6A5", "#AADAC6", #blue-green
+                                "#ED187A", "#F7AEC0" )) + #pink
+  # reduce text and legend size 
+  theme(axis.text = element_text(size = 8), axis.title = element_text(size = 10), 
+        strip.text = element_text(size = 10), plot.title = element_text(size = 12),
+        legend.text = element_text(size = 6), legend.title = element_text(size=8),
+        legend.justification =  "bottom") +
+  coord_flip() 
+bar_p2
+```
+
+Since these samples were collected over time (3 years), we could consider an alternative plot style to the bar plot, the area plot. This requires changing the arguments given to ggplot and the geom function used. 
+```{r}
+area_p <- psq_p %>%
+  # 1% relative abundance or higher
+  filter(Avg_rel_abund >= 0.001, Location_desc == "old tree row") %>%  
+  # set variables and plot type; these are different than in plots above 
+  ggplot(aes(x=Sample_year, y = Avg_rel_abund, group=Phylum, fill = Phylum, Location_desc)) + 
+  geom_area() + 
+  facet_grid(Location_desc~Treatment_ID) +
+  # Clean up labels
+  scale_y_continuous(name = "Relative Abundance (%)",
+                     lim = c(0,1), expand = c(0,0),
+                     labels = c(0, 25, 50, 75, 100) ) + 
+  scale_x_continuous(name = "Soil sample year",
+                     breaks = c(2018, 2019, 2020)) +
+  ggtitle("Old tree row") + 
+  # set custom colors 
+  scale_fill_manual(name = "Phylum", 
+                    values = c("#40B9EB", "#B8DDF5", #lt blue
+                                "#FAA51A", "#FEC679", #orange
+                                "#426FB6", "#AAB7DD", #dark blue
+                                "#8750A0", "#C4ACD3", #mauve
+                                "#71C054", "#A9D595", #green
+                                "#D0499A", "#DF92BF")) + #pink
+  # reduce text and legend size 
+  theme(axis.text.y = element_text(size = 8),  axis.title = element_text(size = 10),
+        axis.text.x = element_text(size = 8, angle=-45, vjust=0, hjust=0.5), 
+        strip.text = element_text(size = 10), plot.title = element_text(size = 12),
+        legend.text = element_text(size = 6), legend.title = element_text(size=8),
+        legend.justification =  "top") 
+area_p
+```
+
+
+# Richness
+We will calculate and extract alpha diversity indices with the estimate_richness() function which is part of the phyloseq package. This package also does contain a plot_richness() function, but users have limited control over the final plot, so I prefer using ggplot functions. 
+
+### Calculate
+Calculate richness using phyloseq function. Since these sample IDs start with numbers, we have to do a little bit extra formatting here. 
+```{r}
+# generate data frame with diversity indices for plotting
+alpha1 <- estimate_richness(psq, split = TRUE,  # Calculate diversity indices
+                               measures = c("Observed", "Shannon", "Chao1", "InvSimpson")) %>%
+  # get sample IDs, remove X, replace period with hyphen 
+  rownames_to_column(var = "tmp1") %>% # make temporary column
+  separate(col = "tmp1", 
+           into = c("tmp2", "Sample_ID"), 
+           sep = "X", remove = FALSE) %>% #separate at "X"
+  mutate(Sample_ID = str_replace_all(Sample_ID, 
+                                     pattern = "\\.", replacement="-")) %>% #replace period with hyphen
+  select(-tmp1, -tmp2) #drop extra columns 
+```
+
+Join the calculated indices back with the sample metadata. This will be useful for conducting statistics on these values and also for plotting. 
+```{r}
+# add metadata to alpha diversity metrics
+alpha2 <- meta %>%
+  left_join(alpha1, by = "Sample_ID") %>%
+  filter(Sample_year == "2018")
+
+# Make long format for plotting
+alpha3 <- pivot_longer(data = alpha2, 
+                       cols = c("Observed", "Shannon", "Chao1", "InvSimpson"),
+                       names_to = "Index", values_to = "Alpha", 
+                       values_drop_na = FALSE) %>%
+  # set variable order for axes 
+  mutate(Index = factor(Index, levels = c("Observed", "Shannon", "Chao1", "InvSimpson"), 
+                        ordered = TRUE ),
+         Sample_year = factor(Sample_year, levels = c("2018", "2019", "2020"), 
+                              ordered = TRUE))
+```
+
+### Plot it
+```{r}
+alpha_all2 <- alpha3 %>%
+  # plot two of the four indices 
+  filter(Index == "Shannon" | Index == "Observed") %>%
+  ggplot(aes(x = Treatment_ID, y = Alpha, color = Treatment_ID, 
+             Location_desc, Cover_sp )) +
+  facet_grid(Index~Location_desc, scales = "free") + 
+  geom_boxplot(outlier.size = -1) + 
+  geom_jitter(position = position_dodge(width = 0.75), size = 2) +
+  ylab("Alpha diversity metric") +
+  xlab(" ") +
+  scale_color_manual(name = "Treatment",
+                     values = c("#ED1E24", "#5B51A3", "#71C054",
+                                "#D0499A", "#FAA51A", "#40B9EB", "#F4EB21")) + 
+  # standardize text size 
+  theme(axis.text = element_text(size = 8), axis.title = element_text(size = 10),
+        strip.text = element_text(size = 10),
+        legend.text = element_text(size = 6), legend.title = element_text(size=8),
+        legend.position = "bottom") 
+alpha_all2
+```
+### Statistics
+The data frame generated above can be used for statistical tests between treatments:
+```{r}
+# treatment + old drive lane
+ANOVA_L <- alpha2 %>%
+  filter(Location_desc == "old drive lane") %>% 
+  aov(Observed~Treatment_ID, data = .) 
+summary(ANOVA_L) 
+TukeyHSD(ANOVA_L)
+```
+
+
+# Community diverstiy
+Before calculating diversity indices (Bray-Curtis or Jaccard) we need to subset our read counts to an even depth. This means we have the same number of sequences reads in each sample. I did this in advance to save time, the values below should be around 16,000. 
+```{r}
+psq18 <- subset_samples(psq, Sample_year == "2018")
+
+smin <- min(sample_sums(psq18)) 
+smean <- mean(sample_sums(psq18)) 
+smax <- max(sample_sums(psq18)) 
+```
+
+### Conduct ordination analysis
+This step calculates the diversity index (using Bray Curtis in the example below), and does the ranking process of the diversity indices to generate the information necessary to create a two-dimensional plot. Notice the arguments in the ordinate function; the index, Bray Curtis ("bray") or Jaccard ("jaccard"), is specified in the distance argument, and with either of these metrics we will use method = "NMDS". The place were you might want to make some modifications is the k or number of dimensions (this should be somewhere between 1-3), the maximum number of iterations (depending on computer memory this can take several minutes to calculate), and the initial number of iterations to try (100 in the example below). These can be modified to reduce the stress, with the goal of a number less than 0.20 (the lower the better). 
+```{r}
+bc_nmds1 <- ordinate(
+  physeq = psq18, 
+  method = "NMDS", k=2, maxit=200, try=100,
+  distance = "bray")
+bc_nmds1 #stress= 0.1511636
+```
+
+### Plot results
+For these plots we will use the phyloseq function plot_ordination() instead of ggplot(). Grouping variables can be assigned to color and shape. 
+```{r}
+bcp1 <- phyloseq:: plot_ordination(physeq = psq18,
+                                   ordination = bc_nmds1,
+                                   color = "Location_desc",
+                                   shape = "Location_desc") + 
+  geom_point(size = 3) +
+  scale_color_manual(name = "Location_desc", values = c("#FAA51A", "#40B9EB")) +
+  scale_shape_manual(name = "Location", values = c(15, 8)) +
+  # standardize text size 
+  theme(axis.text = element_text(size = 8), axis.title = element_text(size = 10), 
+        strip.text = element_text(size = 10),
+        legend.text = element_text(size = 6),  legend.title = element_text(size=8)) 
+bcp1
+```
+In this plot, the color and shape are assigned to different variables in the data: 
+```{r}
+bcp2 <- phyloseq:: plot_ordination(physeq = psq18,
+                                   ordination = bc_nmds1,
+                                   color = "Treatment_ID",
+                                   shape = "Location_desc") + 
+  geom_point(size = 3) +
+  scale_color_manual(name = "Treatment",
+                     values = c("#ED1E24", "#5B51A3", "#71C054",
+                                "#D0499A", "#FAA51A", "#40B9EB", "#F4EB21")) +
+  scale_shape_manual(name = "Location", values = c(15, 8)) +
+  # standardize text size 
+  theme(axis.text = element_text(size = 8), axis.title = element_text(size = 10), 
+        strip.text = element_text(size = 10),
+        legend.text = element_text(size = 6),  legend.title = element_text(size=8)) 
+bcp2
+```
+
+You can also futher separate these plots with the typical ggplot suite of functions such as facets: 
+```{r}
+bcp3 <- phyloseq:: plot_ordination(physeq = psq18,
+                                   ordination = bc_nmds1,
+                                   color = "Treatment_ID",
+                                   shape = "Location_desc") + 
+  geom_point(size = 3) +
+  facet_grid(~Location_desc) +
+  scale_color_manual(name = "Treatment",
+                     values = c("#ED1E24", "#5B51A3", "#71C054",
+                                "#D0499A", "#FAA51A", "#40B9EB", "#F4EB21")) +
+  scale_shape_manual(name = "Location", values = c(15, 8)) +
+  # standardize text size 
+  theme(axis.text = element_text(size = 8), axis.title = element_text(size = 10), 
+        strip.text = element_text(size = 10),
+        legend.text = element_text(size = 6),  legend.title = element_text(size=8)) 
+bcp3
+```
+
+### Statistical test
+If you observe a pattern (separation of points from different groups) in your ordination plot, you can determine if that is to a significant level with analysis of similarities using distance matrices (ANOSIM or ADONIS). Using the ordination object from the section above, we run the test with the anosim() function, which is part of the vegan package. 
+```{r}
+# Calculate bray curtis distance matrix
+bc_bray1 <- phyloseq::distance(psq18, method="bray") 
+
+# Anosim test 
+LD <- get_variable(psq18, "Location_desc")
+ld_ano <- anosim(bc_bray1, LD)
+ld_ano$signif 
+ld_ano$statistic 
+```
+
+# Save files to locally
+```{r}
+# save example with area plot
+ggsave2(plot = area_p, filename = "phylum_area_plot.tif", 
+        device = "tiff", units = "mm", width = 178, height = 178, dpi = 300)
+
+# save alpha diversity index table
+write_delim(alpha2, file = "alpha_div_ind.csv", 
+            delim = ",", na = "NA", col_names = TRUE)
+```
+
+See this website for color options: http://sape.inf.usi.ch/quick-reference/ggplot2/colour 
+And this site for shape options: http://sape.inf.usi.ch/quick-reference/ggplot2/shape 
+
+-----
+end
+
